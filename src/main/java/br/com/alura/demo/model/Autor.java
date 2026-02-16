@@ -11,6 +11,7 @@ public class Autor {
 
     private String nome;
     private Integer anoNascimento;
+    private Integer anoFalecimento; //
 
 
     @ManyToOne
@@ -24,6 +25,7 @@ public class Autor {
     public Autor(DadosAutor dadosAutor) {
         this.nome = dadosAutor.nome();
         this.anoNascimento = dadosAutor.anoNascimento();
+        this.anoFalecimento = dadosAutor.anoFalecimento();
     }
 
     // Getters e Setters
@@ -36,6 +38,10 @@ public class Autor {
     public Integer getAnoNascimento() { return anoNascimento; }
     public void setAnoNascimento(Integer anoNascimento) { this.anoNascimento = anoNascimento; }
 
+
+    public Integer getAnoFalecimento() { return anoFalecimento; }
+    public void setAnoFalecimento(Integer anoFalecimento) { this.anoFalecimento = anoFalecimento; }
+
     public Livro getLivro() { return livro; }
     public void setLivro(Livro livro) { this.livro = livro; }
 
@@ -45,6 +51,7 @@ public class Autor {
         return "Autor{" +
                 "nome='" + nome + '\'' +
                 ", anoNascimento=" + anoNascimento +
+                ", anoFalecimento=" + anoFalecimento + //
                 '}';
     }
 }

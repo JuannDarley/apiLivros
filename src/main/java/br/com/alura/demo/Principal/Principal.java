@@ -2,15 +2,15 @@ package br.com.alura.demo.Principal;
 
 import br.com.alura.demo.Service.ConsumoApi;
 import br.com.alura.demo.Service.ConverteDados;
+import br.com.alura.demo.model.Autor;
 import br.com.alura.demo.model.DadosLivros;
 import br.com.alura.demo.model.Livro;
 import br.com.alura.demo.model.RespostaApi;
+import br.com.alura.demo.repository.AutorRepository;
 import br.com.alura.demo.repository.LivroRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+
+import java.util.*;
 
 public class Principal {
 
@@ -21,12 +21,16 @@ public class Principal {
 
     private List<Livro> livros = new ArrayList<>();
 
-    private LivroRepository repositorio;
+    private LivroRepository livroRepository;
+    private AutorRepository autorRepository;
+
+
 
     private Optional<Livro> livroBusca;
 
-    public Principal(LivroRepository repositorio) {
-        this.repositorio = repositorio;
+    public Principal(LivroRepository livroRepository, AutorRepository autorRepository) {
+        this.livroRepository = livroRepository;
+        this.autorRepository = autorRepository;
     }
 
 
@@ -40,6 +44,8 @@ public class Principal {
                          MENU LIVROS
                     
                     1 - Buscar Livros
+                    2 - Listar Livros
+                    3 - Listar autores
                                       
                     
                     0 - Sair                                 
@@ -55,6 +61,12 @@ public class Principal {
                 case 1:
                     buscarLivro();
                     break;
+                case 2:
+                    listarTodosLivros();
+                    break;
+                case 3:
+                    listarTodosAutores();
+                    break;
                 case 0:
                     System.out.println("Saindo...");
                     System.exit(0);
@@ -65,12 +77,37 @@ public class Principal {
         }
     }
 
+    private void listarTodosAutores() {
+        List<Autor> autores = autorRepository.findAllByOrderByNomeAsc();
+
+        System.out.println("\n--- Lista de Autores ---");
+        autores.forEach(a -> {
+            System.out.print("Nome: " + a.getNome() +
+                    ", Nascimento: " + a.getAnoNascimento());
+
+
+            if (a.getAnoFalecimento() != null) {
+                System.out.println(", Falecimento: " + a.getAnoFalecimento());
+            } else {
+                System.out.println(", Falecimento: Vivo(a)");
+            }
+        });
+
+    }
+
+    private void listarTodosLivros() {
+        livros = livroRepository.findAll();
+        livros.stream()
+                .sorted(Comparator.comparing(Livro::getTitulo))
+                .forEach(System.out::println);
+    }
+
     private void buscarLivro() {
         DadosLivros dados = getDadosLivros();
 
         if (dados != null) {
 
-            Optional<Livro> livroExistente = repositorio.findByTituloIgnoreCase(dados.titulo());
+            Optional<Livro> livroExistente = livroRepository.findByTituloIgnoreCase(dados.titulo());
 
             if (livroExistente.isPresent()) {
                 System.out.println("O livro '" + dados.titulo() + "' já está cadastrado.");
@@ -78,7 +115,7 @@ public class Principal {
             } else {
 
                 Livro novoLivro = new Livro(dados);
-                repositorio.save(novoLivro);
+                livroRepository.save(novoLivro);
                 System.out.println("Livro salvo com sucesso:");
                 System.out.println(novoLivro);
             }
