@@ -36,7 +36,11 @@ public class Livro {
 
 
         this.autores = dadosLivro.autores().stream()
-                .map(dadosAutor -> new Autor(dadosAutor))
+                .map(dadosAutor -> {
+                    Autor autor = new Autor(dadosAutor);
+                    autor.setLivro(this);
+                    return autor;
+                })
                 .collect(Collectors.toList());
     }
 

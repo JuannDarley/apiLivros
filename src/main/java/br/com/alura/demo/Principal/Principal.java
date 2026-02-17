@@ -45,7 +45,9 @@ public class Principal {
                     
                     1 - Buscar Livros
                     2 - Listar Livros
-                    3 - Listar autores
+                    3 - Listar Autores
+                    4 - Listar Autores Vivos em Determinado Ano
+                    5 - Listar Livros em Determinado Idioma
                                       
                     
                     0 - Sair                                 
@@ -67,6 +69,12 @@ public class Principal {
                 case 3:
                     listarTodosAutores();
                     break;
+                case 4:
+                    listarAutoresVivosNesteAno();
+                    break;
+                case 5:
+                    listarLivrosNoIdiomaDesejado();
+                    break;
                 case 0:
                     System.out.println("Saindo...");
                     System.exit(0);
@@ -74,6 +82,39 @@ public class Principal {
                 default:
                     System.out.println("Opção inválida");
             }
+        }
+    }
+
+    private void listarLivrosNoIdiomaDesejado() {
+
+        System.out.println("Digite a sigla do idioma para pesquisar (ex: pt, en, es):");
+        var idioma = leitura.nextLine().toLowerCase();
+
+        List<Livro> livrosPorIdioma = livroRepository.findByIdiomasContaining(idioma);
+
+        if (livrosPorIdioma.isEmpty()) {
+            System.out.println("Nenhum livro encontrado no idioma: " + idioma);
+        } else {
+            System.out.println("\n--- Livros em " + idioma + " ---");
+            livrosPorIdioma.forEach(System.out::println);
+        }
+    }
+
+    private void listarAutoresVivosNesteAno() {
+
+        System.out.println("Digite o ano para pesquisar:");
+        var ano = leitura.nextInt();
+        leitura.nextLine(); // limpar buffer
+
+        List<Autor> autores = autorRepository.buscarAutoresVivosEmAno(ano);
+
+        if (autores.isEmpty()) {
+            System.out.println("Nenhum autor registrado estava vivo neste ano.");
+        } else {
+            System.out.println("\n--- Lista de Autores Vivos em " + ano + " ---");
+            autores.forEach(a -> System.out.println("Nome: " + a.getNome() +
+                    ", Nascimento: " + a.getAnoNascimento() +
+                    ", Falecimento: " + (a.getAnoFalecimento() == null ? "Vivo(a)" : a.getAnoFalecimento())));
         }
     }
 
